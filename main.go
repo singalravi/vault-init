@@ -45,6 +45,8 @@ var (
 type InitRequest struct {
 	SecretShares    int `json:"secret_shares"`
 	SecretThreshold int `json:"secret_threshold"`
+	RecoveryShares    int `json:"recovery_shares"`
+	RecoveryThreshold int `json:"recovery_threshold"`
 }
 
 // InitResponse holds a Vault init response.
@@ -193,6 +195,8 @@ func initialize() {
 	initRequest := InitRequest{
 		SecretShares:    5,
 		SecretThreshold: 3,
+		RecoveryShares:    5,
+		RecoveryThreshold: 3,
 	}
 
 	initRequestData, err := json.Marshal(&initRequest)
@@ -223,6 +227,7 @@ func initialize() {
 
 	if response.StatusCode != 200 {
 		log.Printf("init: non 200 status code: %d", response.StatusCode)
+		log.Println(string(initRequestResponseBody))
 		return
 	}
 
