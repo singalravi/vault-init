@@ -167,16 +167,14 @@ func main() {
 
 		switch response.StatusCode {
 		case 200:
-			log.Println("Vault is initialized and unsealed.")
+			log.Println("Vault is initialized, unsealed and in active mode.")
 		case 429:
 			log.Println("Vault is unsealed and in standby mode.")
 		case 501:
-			log.Println("Vault is not initialized. Initializing and unsealing...")
+			log.Println("Vault is not initialized. Initializing...")
 			initialize()
-			unseal()
 		case 503:
-			log.Println("Vault is sealed. Unsealing...")
-			unseal()
+			log.Println("Vault is sealed.")
 		default:
 			log.Printf("Vault is in an unknown state. Status code: %d", response.StatusCode)
 		}
