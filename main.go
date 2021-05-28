@@ -99,6 +99,8 @@ func main() {
 	if kmsKeyId == "" {
 		log.Fatal("KMS_KEY_ID must be set and not empty")
 	}
+	
+	vaultAutoUnseal := boolFromEnv("VAULT_AUTO_UNSEAL", true)
 
 	kmsCtx, kmsCtxCancel := context.WithCancel(context.Background())
 	defer kmsCtxCancel()
@@ -173,8 +175,16 @@ func main() {
 		case 501:
 			log.Println("Vault is not initialized. Initializing...")
 			initialize()
+            if !vaultAutoUnseal {
+                log.Println("Unsealing...")
+                unseal()
+            }
 		case 503:
 			log.Println("Vault is sealed.")
+            if !vaultAutoUnseal {
+                log.Println("Unsealing...")
+                unseal()
+            }
 		default:
 			log.Printf("Vault is in an unknown state. Status code: %d", response.StatusCode)
 		}
@@ -381,4 +391,16 @@ func unsealOne(key string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func boolFromEnv(env string, def bool) bool {
+	val := os.Getenv(env)
+	if val == "" {
+		return def
+	}
+	b, err := strconv.ParseBool(val)
+	if err != nil {
+		log.Fatalf("failed to parse %q: %s", env, err)
+	}
+	return b
 }
