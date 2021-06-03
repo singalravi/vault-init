@@ -393,6 +393,7 @@ func unsealOne(key string) (bool, error) {
 	return false, nil
 }
 
+
 func boolFromEnv(env string, def bool) bool {
 	val := os.Getenv(env)
 	if val == "" {
